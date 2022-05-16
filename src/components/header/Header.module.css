@@ -1,0 +1,51 @@
+#Carticon {
+  color: rgb(251, 204, 231);
+  float: right;
+  height: 30px;
+  right: 35px;
+  top: 23px;
+  width: 30px;
+}
+#Headerlogo {
+  border-radius: 3px;
+  color: #f6e4f2;
+  float: left;
+  height: 50px;
+  left: 13px;
+  text-align: center;
+  top: 13px;
+}
+.Header {
+  border-radius: 2px;
+  background-color: #144012;
+  height: 72px;
+  margin: 0px;
+  padding: 0px;
+  position: sticky;
+  top: 0;
+  z-index: 999;
+}
+.Loginbutton {
+  left: 90%;
+  margin-top: 15px;
+  position: absolute;
+  transform: translateX(-50%);
+  width: 100px;
+}
+span.Buttontext {
+  color: white;
+  float: left;
+  left: 73%;
+  margin-top: 25px;
+  position: relative;
+  padding-right: 7px;
+  text-align: center;
+}
+
+.Logoutbutton {
+  left: 90%;
+  margin-top: 15px;
+  position: absolute;
+  transform: translateX(-50%);
+  width: 100px;
+}
