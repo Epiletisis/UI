@@ -6,3 +6,14 @@
 .price {
   justify-self: end;
 }
+
+.keepShoppingButton {
+  background: #666666;
+  border-radius: 20px;
+  color: #EEEEEE;
+  cursor: pointer;
+  font-weight: 600px;
+  height: 3em;
+  justify-self: center;
+  width: 75%;
+}

@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useHistory, useLocation } from 'react-router-dom';
 import GoogleLogin, { GoogleLogout } from 'react-google-login';
-import { ShoppingCartOutlined } from '@material-ui/icons';
+import { ShoppingCartOutlined, AccountCircle } from '@material-ui/icons';
+import Badge from '@material-ui/core/Badge';
+import { useCart } from '../checkout-page/CartContext';
 import loginUser from './HeaderService';
 import constants from '../../utils/constants';
 import fellowShipLogo from '../../utils/Images/Fellowshiplogo.png';
 import styles from './Header.module.css';
+
 /**
  * @name Header
  * @description Displays the navigation header
@@ -15,6 +18,12 @@ const Header = () => {
   const [user, setUser] = useState('');
   const [googleError, setGoogleError] = useState('');
   const [apiError, setApiError] = useState(false);
+
+  const {
+    state: { products }
+  } = useCart();
+  const history = useHistory();
+  const location = useLocation();
   /**
    * @name handleGoogleLoginSuccess
    * @description Function to run if google login was successful
@@ -27,6 +36,8 @@ const Header = () => {
       firstName: response.profileObj.givenName,
       lastName: response.profileObj.familyName
     };
+    localStorage.setItem('userEmail', googleUser.email);
+    localStorage.removeItem('logOut');
     loginUser(googleUser, setUser, setApiError);
     setGoogleError('');
   };
@@ -44,6 +55,10 @@ const Header = () => {
   const handleGoogleLogoutSuccess = () => {
     setUser('');
     setGoogleError('');
+    localStorage.clear();
+    if (location.pathname === '/profile') {
+      history.push('/');
+    }
   };
   /**
    * @name handleGoogleLogoutFailure
@@ -58,7 +73,11 @@ const Header = () => {
         <img src={fellowShipLogo} alt="Home" id={styles.Headerlogo} className={styles.Header} />
       </NavLink>
       <NavLink to="/checkout">
-        <ShoppingCartOutlined alt="cart" id={styles.Carticon} className={styles.Header} />
+        <div id={styles.Carticon} className={styles.Header}>
+          <Badge badgeContent={products.length} color="secondary">
+            <ShoppingCartOutlined alt="cart" />
+          </Badge>
+        </div>
       </NavLink>
       {user && <span className={styles.Buttontext}>{user.firstName}</span>}
       {user && <span className={styles.Buttontext}>{user.lastName}</span>}
@@ -74,13 +93,18 @@ const Header = () => {
           cookiePolicy="single_host_origin"
         />
       ) : (
-        <GoogleLogout
-          className={styles.Logoutbutton}
-          clientId={constants.GOOGLE_CLIENT_ID}
-          buttonText="Logout"
-          onLogoutSuccess={handleGoogleLogoutSuccess}
-          onFailure={handleGoogleLogoutFailure}
-        />
+        [
+          <span>
+            <GoogleLogout
+              className={styles.Logoutbutton}
+              clientId={constants.GOOGLE_CLIENT_ID}
+              buttonText="Logout"
+              onLogoutSuccess={handleGoogleLogoutSuccess}
+              onFailure={handleGoogleLogoutFailure}
+            />
+
+          </span>, <NavLink to="/profile"><span><AccountCircle id={styles.Accountcircle} /></span></NavLink>
+        ]
       )}
     </div>
   );

@@ -1,6 +1,7 @@
 import React from 'react';
 import { unmountComponentAtNode } from 'react-dom';
 import { render, screen } from '@testing-library/react';
+import { BrowserRouter } from 'react-router-dom';
 import ProductPage from './ProductPage';
 import fetchProducts from './ProductPageService';
 
@@ -26,7 +27,7 @@ describe('ProductPage Component Tests', () => {
       setApiError(true);
     });
     render(
-      <ProductPage />, container
+      <BrowserRouter><ProductPage /></BrowserRouter>, container
     );
     expect(screen.getByTestId('errMsg')).toHaveTextContent('Oops, something went wrong');
   });

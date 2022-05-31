@@ -10,7 +10,7 @@ import Constants from '../../utils/constants';
  */
 const makePurchase = async (products, deliveryAddress, billingAddress, creditCard) => {
   await HttpHelper(Constants.PURCHASE_ENDPOINT, 'POST', {
-    products,
+    lineItems: products,
     deliveryAddress,
     billingAddress,
     creditCard
