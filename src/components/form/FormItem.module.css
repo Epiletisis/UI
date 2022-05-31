@@ -10,3 +10,7 @@
   color: #666666;
   margin-bottom: .5em;
 }
+
+.displayErrors {
+  color: #ff0000
+}

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 import { useCart } from './CartContext';
 import OrderItem from './OrderItem';
 import { getSubtotal } from './ReviewOrderWidgetService';
@@ -13,6 +14,11 @@ const ReviewOrderWidget = () => {
   const {
     state: { products }
   } = useCart();
+  const history = useHistory();
+  const redirect = () => {
+    history.push('/');
+  };
+
   return (
     <>
       {products.map(({
@@ -33,6 +39,16 @@ const ReviewOrderWidget = () => {
         </div>
         <div className={styles.price}>
           <p>{getSubtotal(products)}</p>
+        </div>
+        <div className={styles.keepShopping}>
+          {products.length === 0 ? (
+            <p>Your cart is empty. Add things here:</p>
+          ) : (
+            <></>
+          )}
+          <button onClick={redirect} type="button" className={styles.keepShoppingButton}>
+            Keep Shopping
+          </button>
         </div>
       </div>
     </>

@@ -3,6 +3,7 @@ import React from 'react';
 const CartContext = React.createContext();
 
 function cartReducer(state, action) {
+  const stateCopied = { ...state };
   switch (action.type) {
     case 'delete': {
       return {
@@ -11,9 +12,24 @@ function cartReducer(state, action) {
       };
     }
     case 'add': {
+      const stateValues = Object.values(stateCopied.products);
+      const matchingProducts = stateCopied.products.filter((item) => item.id === action.product.id);
+      if (matchingProducts.length > 0) {
+        const itemsInStateValues = stateValues.filter((item) => item.id === matchingProducts[0].id);
+        if (itemsInStateValues.includes(matchingProducts[0])) {
+          stateCopied.products[stateCopied.products
+            .findIndex(
+              (item) => item.id === action.product.id
+            )].quantity += 1;
+        }
+        return {
+          ...stateCopied,
+          products: [...stateCopied.products]
+        };
+      }
       return {
-        ...state,
-        products: [...state.products, action.product]
+        ...stateCopied,
+        products: [...stateCopied.products, action.product]
       };
     }
     default: {
@@ -24,22 +40,7 @@ function cartReducer(state, action) {
 
 function CartProvider({ children }) {
   const initialProducts = {
-    products: [
-      {
-        id: null,
-        title: 'Sport Shoes',
-        price: 49.99,
-        description: 'Sporty shoes for sporty people',
-        quantity: 2
-      },
-      {
-        id: null,
-        title: 'Sport Shorts',
-        price: 39.99,
-        description: 'Sporty shorts for sporty people',
-        quantity: 5
-      }
-    ],
+    products: [],
     setProducts: () => { }
   };
   const [state, dispatch] = React.useReducer(cartReducer, initialProducts);

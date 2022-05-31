@@ -10,6 +10,8 @@ import ConfirmationPage from '../confirmation-page/ConfirmationPage';
 import ToastPage from '../toast-page/ToastPage';
 import MaintenancePage from '../maintenance-page/MaintenancePage';
 import Header from '../header/Header';
+import ProfilePage from '../profile-page/ProfilePage';
+import Footer from '../footer/Footer';
 
 /**
  * @name App
@@ -26,13 +28,17 @@ const App = () => (
       closeOnClick={false}
     />
     <Header />
-    <Switch>
-      <Route exact path="/" render={() => <ProductPage />} />
-      <Route exact path="/checkout" render={() => <CheckoutPage />} />
-      <Route exact path="/confirmation" render={() => <ConfirmationPage />} />
-      <Route exact path="/toast" render={() => <ToastPage />} />
-      <Route exact path="/maintenance" render={() => <MaintenancePage />} />
-    </Switch>
+    <div className="pageBody">
+      <Switch>
+        <Route exact path="/" render={() => <ProductPage />} />
+        <Route exact path="/checkout" render={() => <CheckoutPage />} />
+        <Route exact path="/confirmation" render={() => <ConfirmationPage />} />
+        <Route exact path="/toast" render={() => <ToastPage />} />
+        <Route exact path="/maintenance" render={() => <MaintenancePage />} />
+        <Route exact path="/profile" render={() => <ProfilePage />} />
+      </Switch>
+    </div>
+    <Footer />
   </BrowserRouter>
 );
 

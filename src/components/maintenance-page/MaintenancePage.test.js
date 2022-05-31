@@ -22,7 +22,7 @@ describe('MaintenancePage Component Tests', () => {
   });
 
   it('shows error msg text when an error is thrown', () => {
-    fetchProducts.mockImplementation((setApiError) => {
+    fetchProducts.mockImplementation((setProducts, setApiError) => {
       setApiError(true);
     });
     render(
