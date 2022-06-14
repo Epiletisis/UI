@@ -14,8 +14,9 @@ const FormItemDropdown = ({
     <label className={styles.label} htmlFor={id}>
       {label}
       <div>
+
         <select
-          className={styles.input}
+          className={errorMessage ? styles.highlightInputBox : styles.input}
           id={id}
           onBlur={onChange}
           onChange={onChange}
@@ -30,8 +31,10 @@ const FormItemDropdown = ({
             </option>
           ))}
         </select>
+        <div className={errorMessage ? styles.displayErrors : styles.hideErrorsCheckout}>
+          {errorMessage || 'Errors displayed here'}
+        </div>
       </div>
-      <div className={styles.displayErrors}>{errorMessage}</div>
     </label>
   </div>
 );

@@ -3,6 +3,7 @@ body {
   font-family: 'Varela Round', sans-serif;
   font-weight: 500;
   color: #2f4858;
+  margin: 0%;
 }
 
 .App {
@@ -43,6 +44,13 @@ body {
     transform: rotate(360deg);
   }
 }
+
+.errMsg {
+    color: red;
+    font-size:small;
+    /* font-family: 'Varela Round', sans-serif;  */
+    margin: 0px 2px 4px 4px;
+  }
 
 .pageBody {
   min-height: calc(100vh - 132px);

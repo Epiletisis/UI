@@ -9,13 +9,9 @@ import TableCell from '@material-ui/core/TableCell';
  */
 const columnNames = [
   { id: 'id' },
-  {
-    id: 'active', format: (value) => { if (value) return 'True'; return 'False'; }
-  },
+  { id: 'active', format: (value) => { if (value) return 'True'; return 'False'; } },
   { id: 'name' },
-  {
-    id: 'price', format: (value) => value.toFixed(2)
-  },
+  { id: 'price', format: (value) => value.toFixed(2) },
   { id: 'quantity' },
   { id: 'sku' },
   { id: 'description' },

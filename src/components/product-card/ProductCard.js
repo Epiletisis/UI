@@ -13,8 +13,8 @@ import FavoriteIcon from '@material-ui/icons/Favorite';
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
 import ShareIcon from '@material-ui/icons/Share';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import ReviewsIcon from '@mui/icons-material/Reviews';
 import { toast } from 'react-toastify';
-import Constants from '../../utils/constants';
 import { useCart } from '../checkout-page/CartContext';
 
 /**
@@ -51,7 +51,7 @@ const useStyles = makeStyles((theme) => ({
  * @param {*} props product
  * @return component
  */
-const ProductCard = ({ product }) => {
+const ProductCard = ({ product, handleOpen }) => {
   const classes = useStyles();
 
   const { dispatch } = useCart();
@@ -90,8 +90,8 @@ const ProductCard = ({ product }) => {
       />
       <CardMedia
         className={classes.media}
-        image={Constants.PLACEHOLDER_IMAGE}
-        title="placeholder"
+        image={`${product.imageSrc}`}
+        title={`${product.name}`}
       />
       <CardContent>
         <Typography variant="body2" color="textSecondary" component="p">
@@ -113,6 +113,13 @@ const ProductCard = ({ product }) => {
         <IconButton aria-label="add to shopping cart" onClick={onAdd}>
           <AddShoppingCartIcon />
         </IconButton>
+        {product.reviews.length > 0
+          ? (
+            <IconButton>
+              <ReviewsIcon onClick={() => handleOpen(product)} />
+            </IconButton>
+          ) : null}
+
       </CardActions>
     </Card>
   );

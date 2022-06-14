@@ -6,10 +6,12 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import Paper from '@material-ui/core/Paper';
+import { NavLink } from 'react-router-dom';
 import MaintenanceTable from '../maintenance-table/MaintenanceTable';
 import styles from './MaintenancePage.module.css';
 import Constants from '../../utils/constants';
 import fetchProducts from './MaintenancePageService';
+// import CreateProductPage from '../create-product-page/CreateProductPage';
 
 /**
  * @name MaintenancePage
@@ -22,9 +24,23 @@ const MaintenancePage = () => {
   useEffect(() => {
     fetchProducts(setProducts, setApiError);
   }, []);
+
   return (
     <div>
       {apiError && <p className={styles.errMsg} data-testid="errMsg">{Constants.API_ERROR}</p>}
+      <div className="buttonContainer">
+        <NavLink to="/create-product">
+          <button className={styles.createNewProductButton} type="submit">
+            <text>+  Create New Product</text>
+          </button>
+        </NavLink>
+        <NavLink to="/create-promo">
+          <button className={styles.createPromoButton} type="submit">
+            <text>+  Create New Promo</text>
+          </button>
+        </NavLink>
+      </div>
+
       <div>
 
         <div>
@@ -34,8 +50,8 @@ const MaintenancePage = () => {
             }}
             component={Paper}
           >
-            <Table>
-              <TableHead>
+            <Table className={styles.MaintenanceTable}>
+              <TableHead className={styles.MaintenanceTableHeader}>
                 <TableRow>
                   <TableCell>ID</TableCell>
                   <TableCell>Active</TableCell>

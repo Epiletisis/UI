@@ -9,7 +9,7 @@ import Constants from '../../utils/constants';
  * @param {*} setApiError sets error if response other than 200 is returned
  * @returns sets state for Brands if 200 response, else sets state for apiError
  */
-export const fetchBrands = async (setBrands) => {
+const fetchBrands = async (setBrands, setApiError) => {
   await HttpHelper(Constants.PRODUCT_BRANDS_ENDPOINT, 'GET')
     .then((response) => {
       if (response.ok) {
@@ -17,7 +17,10 @@ export const fetchBrands = async (setBrands) => {
       }
       throw new Error(Constants.API_ERROR);
     })
-    .then(setBrands);
+    .then(setBrands)
+    .catch(() => {
+      setApiError(true);
+    });
 };
 
 /**
@@ -28,7 +31,7 @@ export const fetchBrands = async (setBrands) => {
  * @param {*} setApiError sets error if response other than 200 is returned
  * @returns sets state for Brands if 200 response, else sets state for apiError
  */
-export const fetchCategories = async (setCategories) => {
+const fetchCategories = async (setCategories, setApiError) => {
   await HttpHelper(Constants.PRODUCT_CATEGORIES_ENDPOINT, 'GET')
     .then((response) => {
       if (response.ok) {
@@ -36,7 +39,10 @@ export const fetchCategories = async (setCategories) => {
       }
       throw new Error(Constants.API_ERROR);
     })
-    .then(setCategories);
+    .then(setCategories)
+    .catch(() => {
+      setApiError(true);
+    });
 };
 
 /**
@@ -47,7 +53,7 @@ export const fetchCategories = async (setCategories) => {
  * @param {*} setApiError sets error if response other than 200 is returned
  * @returns sets state for Brands if 200 response, else sets state for apiError
  */
-export const fetchDemographics = async (setDemographics) => {
+const fetchDemographics = async (setDemographics, setApiError) => {
   await HttpHelper(Constants.PRODUCT_DEMOGRAPHICS_ENDPOINT, 'GET')
     .then((response) => {
       if (response.ok) {
@@ -55,7 +61,10 @@ export const fetchDemographics = async (setDemographics) => {
       }
       throw new Error(Constants.API_ERROR);
     })
-    .then(setDemographics);
+    .then(setDemographics)
+    .catch(() => {
+      setApiError(true);
+    });
 };
 
 /**
@@ -66,7 +75,7 @@ export const fetchDemographics = async (setDemographics) => {
  * @param {*} setApiError sets error if response other than 200 is returned
  * @returns sets state for Brands if 200 response, else sets state for apiError
  */
-export const fetchColors = async (setColors) => {
+const fetchColors = async (setColors, setApiError) => {
   await HttpHelper(Constants.PRODUCT_COLORS_ENDPOINT, 'GET')
     .then((response) => {
       if (response.ok) {
@@ -74,7 +83,10 @@ export const fetchColors = async (setColors) => {
       }
       throw new Error(Constants.API_ERROR);
     })
-    .then(setColors);
+    .then(setColors)
+    .catch(() => {
+      setApiError(true);
+    });
 };
 
 /**
@@ -85,7 +97,7 @@ export const fetchColors = async (setColors) => {
  * @param {*} setApiError sets error if response other than 200 is returned
  * @returns sets state for Brands if 200 response, else sets state for apiError
  */
-export const fetchMaterials = async (setMaterials) => {
+const fetchMaterials = async (setMaterials, setApiError) => {
   await HttpHelper(Constants.PRODUCT_MATERIALS_ENDPOINT, 'GET')
     .then((response) => {
       if (response.ok) {
@@ -93,5 +105,20 @@ export const fetchMaterials = async (setMaterials) => {
       }
       throw new Error(Constants.API_ERROR);
     })
-    .then(setMaterials);
+    .then(setMaterials)
+    .catch(() => {
+      setApiError(true);
+    });
 };
+
+const fetchProductFilters = async (
+  setBrands, setCategories, setDemographics, setColors, setMaterials, setApiError
+) => {
+  fetchBrands(setBrands, setApiError);
+  fetchCategories(setCategories, setApiError);
+  fetchDemographics(setDemographics, setApiError);
+  fetchColors(setColors, setApiError);
+  fetchMaterials(setMaterials, setApiError);
+};
+
+export default fetchProductFilters;

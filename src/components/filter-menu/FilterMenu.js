@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
@@ -19,78 +19,113 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import { FormControl } from '@mui/material';
 import Button from '@mui/material/Button';
 import InputAdornment from '@mui/material/InputAdornment';
-import {
-  fetchBrands, fetchCategories, fetchDemographics, fetchColors, fetchMaterials
-} from './FilterMenuService';
-
-const drawerWidth = 240;
+import fetchProductFilters from './FilterMenuService';
+import fetchProducts from '../product-page/ProductPageService';
 
 /**
  * @name FilterMenu
- * @description fetches all unique filtering options from API and dsplays them
- * on a collapsible side menu
+ * @description fetches all unique filtering options from API and dsplays them into accordions
+ * inside of the filter menu drawer
  * @return component
  */
-export default function FilterMenu() {
+export default function FilterMenu({
+  setFilters, filters, setProducts, setApiError, setAllowTooSpecificError
+}) {
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
-  const [isActiveFilter, setActiveFilter] = React.useState(false);
-  const [brands, setBrands] = React.useState([]);
-  const [categories, setCategories] = React.useState([]);
-  const [demographics, setDemographics] = React.useState([]);
-  const [colors, setColors] = React.useState([]);
-  const [materials, setMaterials] = React.useState([]);
-  const [minTextInput, setMinTextInput] = React.useState('');
-  const [maxTextInput, setMaxTextInput] = React.useState('');
+  const [open, setOpen] = useState(false);
+  const [brands, setBrands] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [demographics, setDemographics] = useState([]);
+  const [colors, setColors] = useState([]);
+  const [materials, setMaterials] = useState([]);
+  const [minTextInput, setMinTextInput] = useState('');
+  const [maxTextInput, setMaxTextInput] = useState('');
+  const [minInputErrorText, setMinInputErrorText] = useState('');
+  const [maxInputErrorText, setMaxInputErrorText] = useState('');
 
   useEffect(() => {
-    fetchBrands(setBrands);
+    fetchProductFilters(setBrands, setCategories, setDemographics,
+      setColors, setMaterials, setApiError);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    fetchCategories(setCategories);
-  }, []);
-
-  useEffect(() => {
-    fetchDemographics(setDemographics);
-  }, []);
-
-  useEffect(() => {
-    fetchColors(setColors);
-  }, []);
-
-  useEffect(() => {
-    fetchMaterials(setMaterials);
-  }, []);
-
-  const handleDrawerOpen = () => {
-    setOpen(true);
+  const replacePound = (string) => {
+    const oldString = string;
+    const newString = oldString.replace(/#/g, '%23');
+    return newString;
   };
 
-  const handleDrawerClose = () => {
-    setOpen(false);
+  const handleDrawer = () => {
+    setOpen(!open);
   };
 
-  const handleActiveFilter = () => {
-    setActiveFilter(!isActiveFilter);
+  const getMinPriceError = (minPrice) => {
+    let errorText = '';
+    switch (minPrice) {
+      case !minPrice.match(/^(([1-9][0-9]{0,14}|0)(\.[0-9]{2}))$|^$/) ? minPrice : '-1':
+        errorText = 'Price must be in the format "X.XX".';
+        break;
+      case parseInt(minPrice, 10) > parseInt(maxTextInput, 10) ? minPrice : '-1':
+        errorText = 'Minimum Price cannot exceed Maximum Price.';
+        break;
+      default: break;
+    }
+    return errorText;
   };
 
-  const handleMinTextInputChange = (event) => {
-    setMinTextInput(event.target.value);
-    if (event.target.value.length !== 0 || maxTextInput.length !== 0) {
-      setActiveFilter(true);
-    } else {
-      setActiveFilter(false);
+  const getMaxPriceError = (maxPrice) => {
+    let errorText = '';
+    switch (maxPrice) {
+      case !maxPrice.match(/^(([1-9][0-9]{0,14}|0)(\.[0-9]{2}))$|^$/) ? maxPrice : '-1':
+        errorText = 'Price must be in the format "X.XX".';
+        break;
+      default: break;
+    }
+    return errorText;
+  };
+
+  const onMinInputChange = (event) => {
+    if (event.target.value.length < 16) {
+      setMinTextInput(event.target.value);
+      const filterArray = filters.filter((filter) => !filter.includes('minPrice'));
+      if (event.target.value) {
+        filterArray.push(`&minPrice=${event.target.value}`);
+      }
+      setFilters(filterArray);
     }
   };
 
-  const handleMaxTextInputChange = (event) => {
-    setMaxTextInput(event.target.value);
-    if (event.target.value.length !== 0 || minTextInput.length !== 0) {
-      setActiveFilter(true);
-    } else {
-      setActiveFilter(false);
+  const onMaxInputChange = (event) => {
+    if (event.target.value.length < 16) {
+      setMaxTextInput(event.target.value);
+      const filterArray = filters.filter((filter) => !filter.includes('maxPrice'));
+      if (event.target.value) {
+        filterArray.push(`&maxPrice=${event.target.value}`);
+      }
+      setFilters(filterArray);
     }
+  };
+
+  const handleApplyFiltersClick = () => {
+    const minPriceError = getMinPriceError(minTextInput);
+    const maxPriceError = getMaxPriceError(maxTextInput);
+    setMaxInputErrorText(maxPriceError);
+    setMinInputErrorText(minPriceError);
+
+    if (!(minPriceError || maxPriceError)) {
+      fetchProducts(setProducts, setApiError, filters);
+    }
+    setAllowTooSpecificError(true);
+  };
+
+  const handleCheck = (event) => {
+    const filterArray = [...filters];
+    if (event.target.checked) {
+      filterArray.push(`&${event.target.id}=${replacePound(event.target.value)}`);
+    } else {
+      filterArray.splice(filters.indexOf(`&${event.target.id}=${event.target.value}`), 1);
+    }
+    setFilters(filterArray);
   };
 
   const DrawerHeader = styled('div')(() => ({
@@ -103,10 +138,10 @@ export default function FilterMenu() {
     <>
       <IconButton
         aria-label="open drawer"
-        onClick={handleDrawerOpen}
+        onClick={handleDrawer}
         edge="start"
         sx={{
-          color: isActiveFilter ? '#99078c' : '#144012',
+          color: filters.length !== 0 ? '#99078c' : '#144012',
           ml: 0.5,
           mr: 0.5,
           mt: 0.25
@@ -120,7 +155,7 @@ export default function FilterMenu() {
         PaperProps={{
           sx: {
             backgroundColor: '#f8a1e5',
-            width: drawerWidth,
+            width: '240px',
             flexShrink: 0,
             height: '92.5vh',
             marginTop: '72px'
@@ -130,144 +165,151 @@ export default function FilterMenu() {
         anchor="left"
         open={open}
       >
-
         <DrawerHeader>
-          <IconButton onClick={handleDrawerClose}>
+          <IconButton onClick={handleDrawer}>
             {theme.direction === 'ltr' ? <ChevronLeftIcon sx={{ color: '#144012' }} /> : <ChevronRightIcon />}
           </IconButton>
         </DrawerHeader>
 
         <div>
-          <Accordion sx={{ backgroundColor: '#f8a1e5', margin: 0 }}>
+          <Accordion sx={{ backgroundColor: '#f8a1e5', margin: 0 }} key="brands">
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="panel1a-content"
               id="panel1a-header"
+              key="brandsSummary"
             >
-              <Typography>Brand</Typography>
+              <Typography key="brandsTypography">Brand</Typography>
             </AccordionSummary>
-            <AccordionDetails>
-              <FormControl>
-                <FormGroup aria-label="position" column sx={{ fontSize: 10 }}>
+            <AccordionDetails key="brandsDetails">
+              <FormControl key="brandsFormControl">
+                <FormGroup key="brandsFormGroup" aria-label="position" column sx={{ fontSize: 10 }}>
                   {brands.map((brand) => (
                     <FormControlLabel
-                      value="Altra"
-                      control={<Checkbox color="success" onClick={handleActiveFilter} />}
-                      label={<Typography variant="body2">{brand}</Typography>}
+                      control={<Checkbox id="brand" value={brand} color="success" onChange={handleCheck} key={`${brands}Checkbox`} />}
+                      label={<Typography variant="body2" key={`${brands}Label`}>{brand}</Typography>}
                       labelPlacement="end"
+                      key={`${brand}FormControlLabel`}
                     />
                   ))}
-                  ;
                 </FormGroup>
               </FormControl>
             </AccordionDetails>
           </Accordion>
 
-          <Accordion sx={{ backgroundColor: '#f8a1e5', margin: 0 }}>
+          <Accordion sx={{ backgroundColor: '#f8a1e5', margin: 0 }} key="category">
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="panel1a-content"
               id="panel1a-header"
             >
-              <Typography>Category</Typography>
+              <Typography key="categoryTypography">Category</Typography>
             </AccordionSummary>
-            <AccordionDetails>
-              <FormControl>
-                <FormGroup aria-label="position" column sx={{ fontSize: 10 }}>
+            <AccordionDetails key="categoryDetails">
+              <FormControl key="categoryFormControl">
+                <FormGroup key="categoryFormGroup" aria-label="position" column sx={{ fontSize: 10 }}>
                   {categories.map((category) => (
                     <FormControlLabel
-                      value="Altra"
-                      control={<Checkbox color="success" onClick={handleActiveFilter} />}
-                      label={<Typography variant="body2">{category}</Typography>}
+                      control={<Checkbox id="category" value={category} color="success" onChange={handleCheck} key={`${category}Checkbox`} />}
+                      label={<Typography variant="body2" key={`${category}Typography`}>{category}</Typography>}
                       labelPlacement="end"
+                      key={`${category}FormControlLabel`}
                     />
                   ))}
-                  ;
                 </FormGroup>
               </FormControl>
             </AccordionDetails>
           </Accordion>
 
-          <Accordion sx={{ backgroundColor: '#f8a1e5' }}>
+          <Accordion sx={{ backgroundColor: '#f8a1e5' }} key="demographic">
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="panel1a-content"
               id="panel1a-header"
+              key="demographicSummary"
             >
-              <Typography>Demographic</Typography>
+              <Typography key="demographicTypography">Demographic</Typography>
             </AccordionSummary>
-            <AccordionDetails>
-              <FormControl>
-                <FormGroup aria-label="position" column sx={{ fontSize: 10 }}>
+            <AccordionDetails key="demographicDetails">
+              <FormControl key="demographicFormControl">
+                <FormGroup aria-label="position" column sx={{ fontSize: 10 }} key="demographicFormGroup">
                   {demographics.map((demographic) => (
                     <FormControlLabel
-                      value="Altra"
-                      control={<Checkbox color="success" onClick={handleActiveFilter} />}
-                      label={<Typography variant="body2">{demographic}</Typography>}
+                      control={<Checkbox id="demographic" value={demographic} color="success" onChange={handleCheck} key={`${demographic}Checkbox`} />}
+                      label={<Typography variant="body2" key={`${demographic}Typography`}>{demographic}</Typography>}
                       labelPlacement="end"
+                      key={`${demographic}FormControlLabel`}
                     />
                   ))}
-                  ;
                 </FormGroup>
               </FormControl>
             </AccordionDetails>
           </Accordion>
 
-          <Accordion sx={{ backgroundColor: '#f8a1e5' }}>
+          <Accordion sx={{ backgroundColor: '#f8a1e5' }} key="price">
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="panel1a-content"
               id="panel1a-header"
+              key="priceSummary"
             >
-              <Typography>Price</Typography>
+              <Typography key="priceTypography">Price</Typography>
             </AccordionSummary>
-            <AccordionDetails>
-              <List>
-                <ListItem>
+            <AccordionDetails key="priceDetails">
+              <List sx={{ boxSizing: 'border-box', height: '250px' }} key="priceList">
+                <ListItem key="priceMinListItem">
                   <TextField
+                    sx={{ boxSizing: 'border-box', height: '100px' }}
                     label="Minimum Price"
-                    id="outlined-size-small"
+                    className=""
+                    id="minPrice"
                     size="small"
                     color="success"
                     value={minTextInput}
-                    onChange={handleMinTextInputChange}
+                    onChange={onMinInputChange}
+                    helperText={minInputErrorText}
+                    error={minInputErrorText}
                     InputProps={{
                       startAdornment: <InputAdornment position="start">$</InputAdornment>
                     }}
+                    key="priceMinTextField"
                   />
                 </ListItem>
-                <ListItem>
+                <ListItem key="priceMaxListItem">
                   <TextField
                     label="Maximum Price"
-                    id="outlined-size-small"
+                    className=""
+                    id="maxPrice"
                     size="small"
                     color="success"
                     value={maxTextInput}
-                    onChange={handleMaxTextInputChange}
+                    onChange={onMaxInputChange}
+                    helperText={maxInputErrorText}
+                    error={maxInputErrorText}
                     InputProps={{
                       startAdornment: <InputAdornment position="start">$</InputAdornment>
                     }}
+                    key="priceMaxTextField"
                   />
                 </ListItem>
               </List>
             </AccordionDetails>
           </Accordion>
 
-          <Accordion sx={{ backgroundColor: '#f8a1e5' }}>
+          <Accordion sx={{ backgroundColor: '#f8a1e5' }} key="color">
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="panel1a-content"
               id="panel1a-header"
             >
-              <Typography>Color</Typography>
+              <Typography key="colorTypography">Color</Typography>
             </AccordionSummary>
-            <AccordionDetails>
-              <FormControl>
-                <FormGroup aria-label="position" column sx={{ fontSize: 10 }}>
+            <AccordionDetails key="colorDetails">
+              <FormControl key="colorFormControl">
+                <FormGroup aria-label="position" column sx={{ fontSize: 10 }} key="colorFormGroup">
                   {colors.map((color) => (
                     <FormControlLabel
-                      value="Altra"
-                      control={<Checkbox color="success" onClick={handleActiveFilter} />}
+                      control={<Checkbox id="color" value={color} color="success" onChange={handleCheck} key={`${colors}Checkbox`} />}
                       label={(
                         <Button
                           variant="contained"
@@ -282,9 +324,11 @@ export default function FilterMenu() {
                               width: '20px'
                             }
                           }}
+                          key={`${color}Label`}
                         />
                       )}
                       labelPlacement="end"
+                      key={`${color}FormControlLabel`}
                     />
                   ))}
                 </FormGroup>
@@ -292,32 +336,31 @@ export default function FilterMenu() {
             </AccordionDetails>
           </Accordion>
 
-          <Accordion sx={{ backgroundColor: '#f8a1e5' }}>
+          <Accordion sx={{ backgroundColor: '#f8a1e5' }} key="material">
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="panel1a-content"
               id="panel1a-header"
             >
-              <Typography>Material</Typography>
+              <Typography key="materialTypography">Material</Typography>
             </AccordionSummary>
-            <AccordionDetails>
-              <FormControl>
-                <FormGroup aria-label="position" column sx={{ fontSize: 10 }}>
+            <AccordionDetails key="materialDetails">
+              <FormControl key="materialFormControl">
+                <FormGroup aria-label="position" column sx={{ fontSize: 10 }} key="materialFormGroup">
                   {materials.map((material) => (
                     <FormControlLabel
-                      value="Altra"
-                      control={<Checkbox color="success" onClick={handleActiveFilter} />}
-                      label={<Typography variant="body2">{material}</Typography>}
+                      control={<Checkbox id="material" value={material} color="success" onChange={handleCheck} key={`${material}Checkbox`} />}
+                      label={<Typography variant="body2" key={`${material}Label`}>{material}</Typography>}
                       labelPlacement="end"
                     />
                   ))}
-                  ;
                 </FormGroup>
               </FormControl>
             </AccordionDetails>
           </Accordion>
 
           <Button
+            onClick={handleApplyFiltersClick}
             variant="contained"
             sx={{
               mt: 2, ml: 6, mb: 5, backgroundColor: '#99078c', '&:hover': { backgroundColor: 'purple' }

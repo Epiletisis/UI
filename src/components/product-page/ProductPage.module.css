@@ -11,3 +11,13 @@
   font-size: 14px;
   margin: 0px 2px 4px 4px;
 }
+
+.noProducts {
+  font-size: 30px;
+  text-align: center;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button { 
+	-webkit-appearance: none;
+}
