@@ -10,19 +10,22 @@ const FormItem = ({
   onChange, value, id, label, placeholder, type, errorMessage
 }) => (
 
-  <div>
+  <div className={styles.form}>
     <label className={styles.label} htmlFor={id}>
       {label}
       <div>
         <input
-          className={styles.input}
+          className={errorMessage ? styles.highlightInputBox : styles.input}
           id={id}
           onChange={onChange}
           placeholder={placeholder}
           type={type}
           value={value}
+          // step=".01"
         />
-        <div className={styles.displayErrors}>{errorMessage}</div>
+        <div className={errorMessage ? styles.displayErrors : styles.hideErrorsCheckout}>
+          {errorMessage || 'Errors displayed here'}
+        </div>
       </div>
     </label>
   </div>

@@ -28,6 +28,6 @@ describe('getSubtotal', () => {
     ];
     const expected = '$23.48';
 
-    expect(getSubtotal(products)).toEqual(expected);
+    expect(toPrice(getSubtotal(products))).toEqual(expected);
   });
 });

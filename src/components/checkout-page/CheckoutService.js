@@ -1,3 +1,4 @@
+import { toast } from 'react-toastify';
 import HttpHelper from '../../utils/HttpHelper';
 import Constants from '../../utils/constants';
 
@@ -15,7 +16,15 @@ const makePurchase = async (products, deliveryAddress, billingAddress, creditCar
     billingAddress,
     creditCard
   })
-    .then((response) => response.json())
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      }
+      throw new Error(response.statusText);
+    })
+    .then(() => {
+      toast.success('Transaction successful.');
+    })
     .catch(() => {
       /* eslint-disable no-console */
       console.log('Failed to purchase');

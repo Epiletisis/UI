@@ -36,6 +36,7 @@ const BillingDetails = ({
             label="Street 2 (Optional)"
             onChange={onChange}
             value={billingData.billingStreet2}
+            errorMessage={errors.billingStreet2}
           />
 
           <FormItem

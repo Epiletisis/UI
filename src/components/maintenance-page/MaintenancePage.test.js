@@ -1,6 +1,7 @@
 import React from 'react';
 import { unmountComponentAtNode } from 'react-dom';
 import { render, screen } from '@testing-library/react';
+import { BrowserRouter } from 'react-router-dom/cjs/react-router-dom.min';
 import MaintenancePage from './MaintenancePage';
 import fetchProducts from './MaintenancePageService';
 
@@ -26,7 +27,7 @@ describe('MaintenancePage Component Tests', () => {
       setApiError(true);
     });
     render(
-      <MaintenancePage />, container
+      <BrowserRouter><MaintenancePage /></BrowserRouter>, container
     );
     expect(screen.getByTestId('errMsg')).toHaveTextContent('Oops, something went wrong');
   });

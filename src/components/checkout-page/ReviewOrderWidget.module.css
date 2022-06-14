@@ -8,6 +8,13 @@
 }
 
 .keepShoppingButton {
+  background: #F8A1E5;
+  border-radius: 20px;
+  color: #2F4858;
+  cursor: pointer;
+  font-family: 'Varela Round', sans-serif;
+  font-weight: 700;
+  font-size: large;
   background: #666666;
   border-radius: 20px;
   color: #EEEEEE;
