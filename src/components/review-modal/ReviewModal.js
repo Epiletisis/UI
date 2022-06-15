@@ -93,7 +93,7 @@ const style = {
  * @param clickedProduct product that was clicked
  * @returns component
  */
-const ReviewModal = ({ open, handleClose, clickedProduct }) => {
+const ReviewModal = ({ reviewOpen, handleReviewClose, clickedProduct }) => {
   const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
@@ -124,14 +124,14 @@ const ReviewModal = ({ open, handleClose, clickedProduct }) => {
   return (
     <div>
       <Modal
-        open={open}
-        onClose={handleClose}
+        open={reviewOpen}
+        onClose={handleReviewClose}
       >
         <Box sx={style.modal}>
           <div sx={style.modalBody}>
             <div>
               <IconButton sx={style.close}>
-                <Close onClick={handleClose} />
+                <Close onClick={handleReviewClose} />
               </IconButton>
               <Typography sx={style.header} variant="h5">
                 Reviews for

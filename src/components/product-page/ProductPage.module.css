@@ -12,12 +12,12 @@
   margin: 0px 2px 4px 4px;
 }
 
+.box{
+  width: 400px;
+  background-color: black;
+}
+
 .noProducts {
   font-size: 30px;
   text-align: center;
-}
-
-input[type=number]::-webkit-inner-spin-button,
-input[type=number]::-webkit-outer-spin-button { 
-	-webkit-appearance: none;
 }

@@ -55,3 +55,8 @@ body {
 .pageBody {
   min-height: calc(100vh - 132px);
 }
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button { 
+	-webkit-appearance: none;
+}

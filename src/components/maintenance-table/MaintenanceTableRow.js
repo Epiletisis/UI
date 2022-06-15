@@ -36,7 +36,7 @@ const columnNames = [
  * @param {*} props product
  * @return maintenance table
  */
-const MaintenanceTable = ({ product }) => (
+const MaintenanceTableRow = ({ product }) => (
   <TableRow>
     {columnNames.map((column) => {
       const value = product[column.id];
@@ -56,4 +56,4 @@ const MaintenanceTable = ({ product }) => (
   </TableRow>
 );
 
-export default MaintenanceTable;
+export default MaintenanceTableRow;

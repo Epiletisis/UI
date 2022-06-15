@@ -4,6 +4,7 @@ import { render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import ProductPage from './ProductPage';
 import fetchProducts from './ProductPageService';
+import { CartProvider } from '../checkout-page/CartContext';
 
 jest.mock('./ProductPageService');
 let container = null;
@@ -27,7 +28,7 @@ describe('ProductPage Component Tests', () => {
       setApiError(true);
     });
     render(
-      <BrowserRouter><ProductPage /></BrowserRouter>, container
+      <CartProvider><BrowserRouter><ProductPage /></BrowserRouter></CartProvider>, container
     );
     expect(screen.getByTestId('errMsg')).toHaveTextContent('Oops, something went wrong');
   });
