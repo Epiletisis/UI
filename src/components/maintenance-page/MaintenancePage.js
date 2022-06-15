@@ -7,7 +7,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import Paper from '@material-ui/core/Paper';
 import { NavLink } from 'react-router-dom';
-import MaintenanceTable from '../maintenance-table/MaintenanceTable';
+import MaintenanceTableRow from '../maintenance-table/MaintenanceTableRow';
 import styles from './MaintenancePage.module.css';
 import Constants from '../../utils/constants';
 import fetchProducts from './MaintenancePageService';
@@ -77,7 +77,7 @@ const MaintenancePage = () => {
               </TableHead>
               <TableBody>
                 {products.map((product) => (
-                  <MaintenanceTable product={product} />
+                  <MaintenanceTableRow product={product} />
                 ))}
               </TableBody>
             </Table>

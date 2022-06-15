@@ -51,12 +51,13 @@ const useStyles = makeStyles((theme) => ({
  * @param {*} props product
  * @return component
  */
-const ProductCard = ({ product, handleOpen }) => {
+const ProductCard = ({ product, handleOpenModal, handleReviewOpen }) => {
   const classes = useStyles();
 
   const { dispatch } = useCart();
 
-  const onAdd = () => {
+  const onAdd = (e) => {
+    e.stopPropagation();
     dispatch(
       {
         type: 'add',
@@ -72,8 +73,18 @@ const ProductCard = ({ product, handleOpen }) => {
     toast.success(`${product.name} added successfully to cart`);
   };
 
+  /**
+ * @name eventPropagation
+ * @description This function is temporary, please remove when functionality is added for
+ * ShareIcon and FavoriteIcon. Add e.stopPropagation to the top of your event handler.
+ * @param {*} e
+ */
+  const eventPropagation = (e) => {
+    e.stopPropagation();
+  };
+
   return (
-    <Card className={classes.root}>
+    <Card className={classes.root} onClick={() => handleOpenModal(product)}>
       <CardHeader
         avatar={(
           <Avatar aria-label="demographics" className={classes.avatar}>
@@ -93,7 +104,7 @@ const ProductCard = ({ product, handleOpen }) => {
         image={`${product.imageSrc}`}
         title={`${product.name}`}
       />
-      <CardContent>
+      <CardContent onClick={() => [handleOpenModal(product)]}>
         <Typography variant="body2" color="textSecondary" component="p">
           {product.description}
         </Typography>
@@ -104,10 +115,10 @@ const ProductCard = ({ product, handleOpen }) => {
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
-        <IconButton aria-label="add to favorites">
+        <IconButton aria-label="add to favorites" onClick={eventPropagation}>
           <FavoriteIcon />
         </IconButton>
-        <IconButton aria-label="share">
+        <IconButton aria-label="share" onClick={eventPropagation}>
           <ShareIcon />
         </IconButton>
         <IconButton aria-label="add to shopping cart" onClick={onAdd}>
@@ -116,7 +127,7 @@ const ProductCard = ({ product, handleOpen }) => {
         {product.reviews.length > 0
           ? (
             <IconButton>
-              <ReviewsIcon onClick={() => handleOpen(product)} />
+              <ReviewsIcon onClick={(e) => [e.stopPropagation(), handleReviewOpen(product)]} />
             </IconButton>
           ) : null}
 

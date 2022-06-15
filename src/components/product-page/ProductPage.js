@@ -4,6 +4,8 @@ import styles from './ProductPage.module.css';
 import Constants from '../../utils/constants';
 import fetchProducts from './ProductPageService';
 import FilterMenu from '../filter-menu/FilterMenu';
+import ProductModal from '../product-modal/ProductModal';
+import ReviewModal from '../review-modal/ReviewModal';
 
 /**
  * @name ProductPage
@@ -13,8 +15,26 @@ import FilterMenu from '../filter-menu/FilterMenu';
 const ProductPage = () => {
   const [products, setProducts] = useState([]);
   const [apiError, setApiError] = useState(false);
+  const [open, setOpen] = React.useState(false);
+  const [reviewOpen, setReviewOpen] = useState(false);
+  const [clickedProduct, setClickedProduct] = useState({});
   const [filters, setFilters] = useState([]);
   const [allowTooSpecificError, setAllowTooSpecificError] = useState(false);
+
+  const handleOpenModal = (product) => {
+    setOpen(true);
+    setClickedProduct(product);
+  };
+
+  const handleCloseModal = () => setOpen(false);
+
+  const handleReviewOpen = (product) => {
+    setOpen(false);
+    setReviewOpen(true);
+    setClickedProduct(product);
+  };
+
+  const handleReviewClose = () => setReviewOpen(false);
 
   useEffect(() => {
     fetchProducts(setProducts, setApiError, filters);
@@ -34,6 +54,17 @@ const ProductPage = () => {
 
       </div>
       {apiError && <p className={styles.errMsg} data-testid="errMsg">{Constants.API_ERROR}</p>}
+      <ProductModal
+        open={open}
+        clickedProduct={clickedProduct}
+        handleCloseModal={handleCloseModal}
+        handleReviewOpen={handleReviewOpen}
+      />
+      <ReviewModal
+        reviewOpen={reviewOpen}
+        handleReviewClose={handleReviewClose}
+        clickedProduct={clickedProduct}
+      />
 
       <div className={allowTooSpecificError && products.length === 0
         ? styles.noProducts : styles.app}
@@ -46,6 +77,8 @@ const ProductPage = () => {
           <div key={product.id}>
             <ProductCard
               product={product}
+              handleOpenModal={handleOpenModal}
+              handleReviewOpen={handleReviewOpen}
             />
           </div>
         )))}
