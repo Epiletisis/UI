@@ -15,7 +15,7 @@ import ReviewModal from '../review-modal/ReviewModal';
 const ProductPage = () => {
   const [products, setProducts] = useState([]);
   const [apiError, setApiError] = useState(false);
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   const [reviewOpen, setReviewOpen] = useState(false);
   const [clickedProduct, setClickedProduct] = useState({});
   const [filters, setFilters] = useState([]);
