@@ -12,5 +12,6 @@ module.exports = Object.freeze({
   PRODUCT_COLORS_ENDPOINT: '/products/colors',
   PRODUCT_MATERIALS_ENDPOINT: '/products/materials',
   PROMOS: '/promos',
+  WISHLIST: '/wishlist',
   GOOGLE_CLIENT_ID: '472383439099-6dbeg14ue7q7iok8ct510ltqd9slf344.apps.googleusercontent.com' // ENTER CLIENT ID HERE
 });

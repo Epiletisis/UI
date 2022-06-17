@@ -6,6 +6,7 @@ import fetchProducts from './ProductPageService';
 import FilterMenu from '../filter-menu/FilterMenu';
 import ProductModal from '../product-modal/ProductModal';
 import ReviewModal from '../review-modal/ReviewModal';
+import getUserByEmail from '../profile-page/ProfilePageService';
 
 /**
  * @name ProductPage
@@ -15,11 +16,13 @@ import ReviewModal from '../review-modal/ReviewModal';
 const ProductPage = () => {
   const [products, setProducts] = useState([]);
   const [apiError, setApiError] = useState(false);
+  const [user, setUser] = useState({});
   const [open, setOpen] = React.useState(false);
   const [reviewOpen, setReviewOpen] = useState(false);
   const [clickedProduct, setClickedProduct] = useState({});
   const [filters, setFilters] = useState([]);
   const [allowTooSpecificError, setAllowTooSpecificError] = useState(false);
+  const userEmail = localStorage.getItem('userEmail');
 
   const handleOpenModal = (product) => {
     setOpen(true);
@@ -40,6 +43,14 @@ const ProductPage = () => {
     fetchProducts(setProducts, setApiError, filters);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    getUserByEmail(userEmail, setUser);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  console.log(user);
+  console.log(userEmail);
 
   return (
     <div>
@@ -77,6 +88,7 @@ const ProductPage = () => {
           <div key={product.id}>
             <ProductCard
               product={product}
+              user={user}
               handleOpenModal={handleOpenModal}
               handleReviewOpen={handleReviewOpen}
             />
