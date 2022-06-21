@@ -49,9 +49,6 @@ const ProductPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  console.log(user);
-  console.log(userEmail);
-
   return (
     <div>
       <div>

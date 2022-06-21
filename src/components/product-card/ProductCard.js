@@ -69,11 +69,11 @@ const ProductCard = ({
  * @returns promo post response, success or error toast
  */
   const addProductToWishList = async () => {
-    const productToAdd = product;
-    productToAdd.userid = user.id;
-    delete productToAdd.reviews;
+    const wishListItem = {};
+    wishListItem.productId = product.id;
+    wishListItem.userid = user.id;
 
-    await HttpHelper(Constants.WISHLIST, 'POST', productToAdd)
+    await HttpHelper(Constants.WISHLIST, 'POST', wishListItem)
       .then((response) => {
         if (response.ok) {
           return response.json();
