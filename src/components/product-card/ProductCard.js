@@ -16,8 +16,6 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ReviewsIcon from '@mui/icons-material/Reviews';
 import { toast } from 'react-toastify';
 import { useCart } from '../checkout-page/CartContext';
-import HttpHelper from '../../utils/HttpHelper';
-import Constants from '../../utils/constants';
 
 /**
  * @name useStyles
@@ -54,41 +52,11 @@ const useStyles = makeStyles((theme) => ({
  * @return component
  */
 const ProductCard = ({
-  product, handleOpenModal, handleReviewOpen, user
+  product, handleOpenModal, handleReviewOpen, user, setUserEmail, addProductToWishList
 }) => {
   const classes = useStyles();
   const { dispatch } = useCart();
   const [added, setAdded] = useState(false);
-  const userEmail = localStorage.getItem('userEmail');
-
-  /**
- *
- * @name addProductToWishList
- * @description sends a promo request
- * @param {*} promo promo to create
- * @param {*} hitory history
- * @returns promo post response, success or error toast
- */
-  const addProductToWishList = async () => {
-    const wishListItem = {};
-    wishListItem.productId = product.id;
-    wishListItem.userid = user.id;
-
-    await HttpHelper(Constants.WISHLIST, 'POST', wishListItem)
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        }
-        throw new Error(response.statusText);
-      })
-      .then(() => {
-        toast.success(`${product.name} successfully added to wishlist.`);
-        setAdded(true);
-      })
-      .catch(() => {
-        toast.error('Oops, something went wrong.');
-      });
-  };
 
   const onAdd = (e) => {
     e.stopPropagation();
@@ -105,6 +73,19 @@ const ProductCard = ({
       }
     );
     toast.success(`${product.name} added successfully to cart`);
+  };
+  /**
+   * @name onAddToWishListClick
+   * @description Handles adding product to users wishlist when favorite icon is clicked.
+   * @param {*} e click
+   */
+  const onAddToWishListClick = (e) => {
+    const email = localStorage.getItem('userEmail');
+    setUserEmail(email);
+    if (email) {
+      e.stopPropagation();
+      addProductToWishList(user, product, setAdded);
+    }
   };
 
   /**
@@ -149,7 +130,7 @@ const ProductCard = ({
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
-        <IconButton aria-label="add to favorites" onClick={(e) => [userEmail && e.stopPropagation(), addProductToWishList()]}>
+        <IconButton aria-label="add to favorites" onClick={onAddToWishListClick}>
           <FavoriteIcon color={added ? 'primary' : 'inherit'} />
         </IconButton>
         <IconButton aria-label="share" onClick={eventPropagation}>

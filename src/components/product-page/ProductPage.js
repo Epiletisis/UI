@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ProductCard from '../product-card/ProductCard';
 import styles from './ProductPage.module.css';
 import Constants from '../../utils/constants';
-import fetchProducts from './ProductPageService';
+import fetchProducts, { addProductToWishList } from './ProductPageService';
 import FilterMenu from '../filter-menu/FilterMenu';
 import ProductModal from '../product-modal/ProductModal';
 import ReviewModal from '../review-modal/ReviewModal';
@@ -22,7 +22,7 @@ const ProductPage = () => {
   const [clickedProduct, setClickedProduct] = useState({});
   const [filters, setFilters] = useState([]);
   const [allowTooSpecificError, setAllowTooSpecificError] = useState(false);
-  const [userEmail] = useState(localStorage.getItem('userEmail'));
+  const [userEmail, setUserEmail] = useState(localStorage.getItem('userEmail'));
 
   const handleOpenModal = (product) => {
     setOpen(true);
@@ -45,9 +45,10 @@ const ProductPage = () => {
   }, []);
 
   useEffect(() => {
-    getUserByEmail(userEmail, setUser);
+    const email = localStorage.getItem('userEmail');
+    getUserByEmail(email, setUser);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [userEmail]);
 
   return (
     <div>
@@ -88,6 +89,8 @@ const ProductPage = () => {
               user={user}
               handleOpenModal={handleOpenModal}
               handleReviewOpen={handleReviewOpen}
+              setUserEmail={setUserEmail}
+              addProductToWishList={addProductToWishList}
             />
           </div>
         )))}
