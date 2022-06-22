@@ -59,6 +59,7 @@ const ProductCard = ({
   const classes = useStyles();
   const { dispatch } = useCart();
   const [added, setAdded] = useState(false);
+  const userEmail = localStorage.getItem('userEmail');
 
   /**
  *
@@ -81,7 +82,7 @@ const ProductCard = ({
         throw new Error(response.statusText);
       })
       .then(() => {
-        toast.success('Product successfully added to Wish List.');
+        toast.success(`${product.name} successfully added to wishlist.`);
         setAdded(true);
       })
       .catch(() => {
@@ -148,7 +149,7 @@ const ProductCard = ({
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
-        <IconButton aria-label="add to favorites" onClick={(e) => [e.stopPropagation(), addProductToWishList()]}>
+        <IconButton aria-label="add to favorites" onClick={(e) => [userEmail && e.stopPropagation(), addProductToWishList()]}>
           <FavoriteIcon color={added ? 'primary' : 'inherit'} />
         </IconButton>
         <IconButton aria-label="share" onClick={eventPropagation}>

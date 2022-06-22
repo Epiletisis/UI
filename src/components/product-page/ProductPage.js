@@ -17,12 +17,12 @@ const ProductPage = () => {
   const [products, setProducts] = useState([]);
   const [apiError, setApiError] = useState(false);
   const [user, setUser] = useState({});
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   const [reviewOpen, setReviewOpen] = useState(false);
   const [clickedProduct, setClickedProduct] = useState({});
   const [filters, setFilters] = useState([]);
   const [allowTooSpecificError, setAllowTooSpecificError] = useState(false);
-  const userEmail = localStorage.getItem('userEmail');
+  const [userEmail] = useState(localStorage.getItem('userEmail'));
 
   const handleOpenModal = (product) => {
     setOpen(true);
