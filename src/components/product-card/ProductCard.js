@@ -44,6 +44,12 @@ const useStyles = makeStyles((theme) => ({
   },
   avatar: {
     backgroundColor: red[500]
+  },
+  inWishList: {
+    color: '#99078c'
+  },
+  default: {
+    color: 'inherit'
   }
 }));
 
@@ -140,7 +146,9 @@ const ProductCard = ({
       </CardContent>
       <CardActions disableSpacing>
         <IconButton aria-label="add to favorites" onClick={onAddToWishListClick}>
-          <FavoriteIcon color={user && user.wishList.some((w) => w.productID === product.id) || user && added ? 'primary' : 'inherit'} />
+          <FavoriteIcon className={user && user.wishList.some((w) => w.productID === product.id)
+            || user && added ? classes.inWishList : classes.inherit}
+          />
         </IconButton>
         <IconButton aria-label="share" onClick={eventPropagation}>
           <ShareIcon />
