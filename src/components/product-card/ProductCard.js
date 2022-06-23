@@ -1,3 +1,4 @@
+/* eslint-disable no-mixed-operators */
 import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
@@ -53,12 +54,17 @@ const useStyles = makeStyles((theme) => ({
  * @return component
  */
 const ProductCard = ({
-  product, handleOpenModal, handleReviewOpen
+  product, handleOpenModal, handleReviewOpen, loginTracker, user
 }) => {
   const classes = useStyles();
   const { dispatch } = useCart();
   const [added, setAdded] = useState(false);
 
+  /**
+   * @name onAdd
+   * @description handles adding a product to the cart.
+   * @param {*} e
+   */
   const onAdd = (e) => {
     e.stopPropagation();
     dispatch(
@@ -84,7 +90,9 @@ const ProductCard = ({
   const onAddToWishListClick = (e) => {
     e.stopPropagation();
     const userEmail = localStorage.getItem('userEmail');
-    if (userEmail && added === false) {
+    if (loginTracker === true
+      && added === false
+      && !user.wishList.some((w) => w.productID === product.id)) {
       addProductToWishList(product, userEmail, setAdded);
     }
   };
@@ -132,7 +140,7 @@ const ProductCard = ({
       </CardContent>
       <CardActions disableSpacing>
         <IconButton aria-label="add to favorites" onClick={onAddToWishListClick}>
-          <FavoriteIcon color={added ? 'primary' : 'inherit'} />
+          <FavoriteIcon color={user && user.wishList.some((w) => w.productID === product.id) || user && added ? 'primary' : 'inherit'} />
         </IconButton>
         <IconButton aria-label="share" onClick={eventPropagation}>
           <ShareIcon />

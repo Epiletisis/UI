@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink, useHistory, useLocation } from 'react-router-dom';
 import GoogleLogin, { GoogleLogout } from 'react-google-login';
 import { ShoppingCartOutlined, AccountCircle } from '@material-ui/icons';
@@ -8,14 +8,14 @@ import loginUser from './HeaderService';
 import constants from '../../utils/constants';
 import fellowShipLogo from '../../utils/Images/Fellowshiplogo.png';
 import styles from './Header.module.css';
+import getUserByEmail from '../profile-page/ProfilePageService';
 
 /**
  * @name Header
  * @description Displays the navigation header
  * @return component
  */
-const Header = () => {
-  const [user, setUser] = useState('');
+const Header = ({ user, setUser, setLoginTracker }) => {
   const [googleError, setGoogleError] = useState('');
   const [apiError, setApiError] = useState(false);
 
@@ -40,6 +40,7 @@ const Header = () => {
     localStorage.removeItem('logOut');
     loginUser(googleUser, setUser, setApiError);
     setGoogleError('');
+    setLoginTracker(true);
   };
   /**
    * @name handleGoogleLoginSuccess
@@ -55,6 +56,7 @@ const Header = () => {
   const handleGoogleLogoutSuccess = () => {
     setUser('');
     setGoogleError('');
+    setLoginTracker(false);
     localStorage.clear();
     if (location.pathname === '/profile') {
       history.push('/');
@@ -67,6 +69,15 @@ const Header = () => {
   const handleGoogleLogoutFailure = () => {
     setGoogleError('There was a problem logging out with Google. Please wait and try again later.');
   };
+
+  /**
+   * useEffect to get user by email.
+   */
+  useEffect(() => {
+    getUserByEmail(localStorage.getItem('userEmail'));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
+
   return (
     <div className={styles.Header}>
       <NavLink to="/home">
