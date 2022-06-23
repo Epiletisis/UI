@@ -16,6 +16,7 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ReviewsIcon from '@mui/icons-material/Reviews';
 import { toast } from 'react-toastify';
 import { useCart } from '../checkout-page/CartContext';
+import addProductToWishList from './ProductCardService';
 
 /**
  * @name useStyles
@@ -52,7 +53,7 @@ const useStyles = makeStyles((theme) => ({
  * @return component
  */
 const ProductCard = ({
-  product, handleOpenModal, handleReviewOpen, user, setUserEmail, addProductToWishList
+  product, handleOpenModal, handleReviewOpen
 }) => {
   const classes = useStyles();
   const { dispatch } = useCart();
@@ -74,17 +75,17 @@ const ProductCard = ({
     );
     toast.success(`${product.name} added successfully to cart`);
   };
+
   /**
    * @name onAddToWishListClick
    * @description Handles adding product to users wishlist when favorite icon is clicked.
-   * @param {*} e click
+   * @param {*} e
    */
   const onAddToWishListClick = (e) => {
-    const email = localStorage.getItem('userEmail');
-    setUserEmail(email);
-    if (email) {
-      e.stopPropagation();
-      addProductToWishList(user, product, setAdded);
+    e.stopPropagation();
+    const userEmail = localStorage.getItem('userEmail');
+    if (userEmail && added === false) {
+      addProductToWishList(product, userEmail, setAdded);
     }
   };
 

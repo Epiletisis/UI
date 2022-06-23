@@ -1,4 +1,3 @@
-import { toast } from 'react-toastify';
 import HttpHelper from '../../utils/HttpHelper';
 import Constants from '../../utils/constants';
 
@@ -25,34 +24,4 @@ const fetchProducts = async (setProducts, setApiError, filters) => {
     });
 };
 
-/**
- *
- * @name addProductToWishList
- * @description sends a promo request
- * @param {*} promo promo to create
- * @param {*} hitory history
- * @returns promo post response, success or error toast
- */
-const addProductToWishList = async (product, user, setAdded) => {
-  const wishListItem = {};
-  wishListItem.productId = product.id;
-  wishListItem.userid = user.id;
-
-  await HttpHelper(Constants.WISHLIST, 'POST', wishListItem)
-    .then((response) => {
-      if (response.ok) {
-        return response.json();
-      }
-      throw new Error(response.statusText);
-    })
-    .then(() => {
-      toast.success(`${product.name} successfully added to wishlist.`);
-      setAdded(true);
-    })
-    .catch(() => {
-      toast.error('Oops, something went wrong.');
-    });
-};
-
-export { addProductToWishList };
 export default fetchProducts;
