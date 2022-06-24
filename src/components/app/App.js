@@ -49,6 +49,7 @@ const App = () => {
               <ProductPage
                 user={user}
                 loginTracker={loginTracker}
+                setUser={setUser}
               />
             )}
           />

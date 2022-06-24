@@ -18,6 +18,7 @@ import ReviewsIcon from '@mui/icons-material/Reviews';
 import { toast } from 'react-toastify';
 import { useCart } from '../checkout-page/CartContext';
 import addProductToWishList from './ProductCardService';
+import getUserByEmail from '../profile-page/ProfilePageService';
 
 /**
  * @name useStyles
@@ -60,7 +61,7 @@ const useStyles = makeStyles((theme) => ({
  * @return component
  */
 const ProductCard = ({
-  product, handleOpenModal, handleReviewOpen, loginTracker, user
+  product, handleOpenModal, handleReviewOpen, loginTracker, user, setUser
 }) => {
   const classes = useStyles();
   const { dispatch } = useCart();
@@ -89,6 +90,16 @@ const ProductCard = ({
   };
 
   /**
+ * @name eventPropagation
+ * @description This function is temporary, please remove when functionality is added for
+ * ShareIcon and FavoriteIcon. Add e.stopPropagation to the top of your event handler.
+ * @param {*} e
+ */
+  const eventPropagation = (e) => {
+    e.stopPropagation();
+  };
+
+  /**
    * @name onAddToWishListClick
    * @description Handles adding product to users wishlist when favorite icon is clicked.
    * @param {*} e
@@ -100,17 +111,8 @@ const ProductCard = ({
       && added === false
       && !user.wishList.some((w) => w.productID === product.id)) {
       addProductToWishList(product, userEmail, setAdded);
+      getUserByEmail(userEmail, setUser);
     }
-  };
-
-  /**
- * @name eventPropagation
- * @description This function is temporary, please remove when functionality is added for
- * ShareIcon and FavoriteIcon. Add e.stopPropagation to the top of your event handler.
- * @param {*} e
- */
-  const eventPropagation = (e) => {
-    e.stopPropagation();
   };
 
   return (
@@ -145,7 +147,7 @@ const ProductCard = ({
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
-        <IconButton aria-label="add to favorites" onClick={onAddToWishListClick}>
+        <IconButton aria-label="add to favorites" onClick={(e) => onAddToWishListClick(e)}>
           <FavoriteIcon className={user && user.wishList.some((w) => w.productID === product.id)
             || user && added ? classes.inWishList : classes.inherit}
           />

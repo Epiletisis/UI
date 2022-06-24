@@ -12,13 +12,14 @@ import ReviewModal from '../review-modal/ReviewModal';
  * @description fetches products from API and displays products as product cards
  * @return component
  */
-const ProductPage = ({ user, loginTracker }) => {
+const ProductPage = ({ user, loginTracker, setUser }) => {
   const [products, setProducts] = useState([]);
   const [apiError, setApiError] = useState(false);
   const [open, setOpen] = useState(false);
   const [reviewOpen, setReviewOpen] = useState(false);
   const [clickedProduct, setClickedProduct] = useState({});
   const [filters, setFilters] = useState([]);
+  const [added, setAdded] = useState(false);
   const [allowTooSpecificError, setAllowTooSpecificError] = useState(false);
 
   /**
@@ -28,6 +29,7 @@ const ProductPage = ({ user, loginTracker }) => {
    */
   const handleOpenModal = (product) => {
     setOpen(true);
+    setAdded(false);
     setClickedProduct(product);
   };
 
@@ -58,7 +60,7 @@ const ProductPage = ({ user, loginTracker }) => {
    * useEffect to fetch products based on filters selected.
    */
   useEffect(() => {
-    fetchProducts(setProducts, setApiError, filters);
+    setTimeout(() => { fetchProducts(setProducts, setApiError, filters); }, 2000);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
@@ -77,6 +79,11 @@ const ProductPage = ({ user, loginTracker }) => {
       {apiError && <p className={styles.errMsg} data-testid="errMsg">{Constants.API_ERROR}</p>}
       <ProductModal
         open={open}
+        user={user}
+        setUser={setUser}
+        added={added}
+        setAdded={setAdded}
+        loginTracker={loginTracker}
         clickedProduct={clickedProduct}
         handleCloseModal={handleCloseModal}
         handleReviewOpen={handleReviewOpen}
@@ -101,6 +108,7 @@ const ProductPage = ({ user, loginTracker }) => {
               handleOpenModal={handleOpenModal}
               handleReviewOpen={handleReviewOpen}
               user={user}
+              setUser={setUser}
               loginTracker={loginTracker}
             />
           </div>

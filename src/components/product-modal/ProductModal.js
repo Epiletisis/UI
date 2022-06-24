@@ -1,3 +1,4 @@
+/* eslint-disable no-mixed-operators */
 import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -5,34 +6,20 @@ import Modal from '@mui/material/Modal';
 import { QuantityPicker } from 'react-qty-picker';
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
 import CloseIcon from '@mui/icons-material/Close';
+import FavoriteIcon from '@material-ui/icons/Favorite';
 import IconButton from '@material-ui/core/IconButton';
 import { toast } from 'react-toastify';
 import ReviewsIcon from '@mui/icons-material/Reviews';
 import { useCart } from '../checkout-page/CartContext';
+import addProductToWishList from '../product-card/ProductCardService';
+import getUserByEmail from '../profile-page/ProfilePageService';
 
 const ProductModal = ({
-  open, clickedProduct, handleCloseModal, handleReviewOpen
+  open, clickedProduct, handleCloseModal, handleReviewOpen,
+  user, setUser, loginTracker, added, setAdded
 }) => {
   const [quantityValue, setQuantityValue] = useState(1);
-
   const { dispatch } = useCart();
-
-  const onAdd = () => {
-    dispatch(
-      {
-        type: 'add',
-        product: {
-          id: clickedProduct.id,
-          title: clickedProduct.name,
-          price: clickedProduct.price,
-          description: clickedProduct.description,
-          quantity: quantityValue
-        }
-      }
-    );
-    toast.success(`${clickedProduct.name} added successfully to cart`);
-  };
-
   const style = {
     Modal: {
       position: 'absolute',
@@ -192,14 +179,56 @@ const ProductModal = ({
     reviewButtion: {
       position: 'relative',
       float: 'bottom-right',
-      right: -295,
+      right: -330,
       top: 167
+    },
+    favoriteButton: {
+      position: 'relative',
+      float: 'bottom-right',
+      right: -235,
+      top: 215
+    },
+    inWishList: {
+      color: '#99078c'
+    },
+    inherit: {
+      color: 'inherit'
     }
 
   };
 
-  return (
+  const onAdd = () => {
+    dispatch(
+      {
+        type: 'add',
+        product: {
+          id: clickedProduct.id,
+          title: clickedProduct.name,
+          price: clickedProduct.price,
+          description: clickedProduct.description,
+          quantity: quantityValue
+        }
+      }
+    );
+    toast.success(`${clickedProduct.name} added successfully to cart`);
+  };
 
+  /**
+   * @name onAddToWishListClick
+   * @description Handles adding product to users wishlist when favorite icon is clicked.
+   * @param {*} e
+   */
+  const onAddToWishListClick = (e) => {
+    e.stopPropagation();
+    const userEmail = localStorage.getItem('userEmail');
+    if (loginTracker === true
+      && !user.wishList.some((w) => w.productID === clickedProduct.id)) {
+      addProductToWishList(clickedProduct, userEmail, setAdded);
+      getUserByEmail(userEmail, setUser);
+    }
+  };
+
+  return (
     <Modal
       open={open}
       onClose={handleCloseModal}
@@ -254,6 +283,12 @@ const ProductModal = ({
           <Typography>
             <IconButton aria-label="add to shopping cart" style={style.carticon} onClick={onAdd}>
               <AddShoppingCartIcon />
+            </IconButton>
+            <IconButton aria-label="add to favorites" onClick={(e) => onAddToWishListClick(e)} style={style.favoriteButton}>
+              <FavoriteIcon style={user
+                && user.wishList.some((w) => w.productID === clickedProduct.id)
+                || user && added ? style.inWishList : style.inherit}
+              />
             </IconButton>
           </Typography>
           <IconButton aria-label="Close" onClick={handleCloseModal} style={style.closeicon}>

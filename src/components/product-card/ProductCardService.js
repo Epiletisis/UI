@@ -11,7 +11,7 @@ import Constants from '../../utils/constants';
  * @param {*} setAdded sets state of favorite button color on product.
  * @returns promo post response, success or error toast
  */
-const addProductToWishList = async (product, userEmail, setAdded) => {
+const addProductToWishList = async (product, userEmail, setState) => {
   const wishListItem = {};
   wishListItem.productId = product.id;
 
@@ -20,14 +20,16 @@ const addProductToWishList = async (product, userEmail, setAdded) => {
       if (response.ok) {
         return response.json();
       }
+      if (response === 503) {
+        toast.error('Oops, something went wrong.');
+      }
       throw new Error(response.statusText);
     })
     .then(() => {
       toast.success(`${product.name} successfully added to wishlist.`);
-      setAdded(true);
+      setState(true);
     })
     .catch(() => {
-      toast.error('Oops, something went wrong.');
     });
 };
 
